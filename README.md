@@ -222,6 +222,7 @@ case 'ferry':
 
 ## Code Quality
 
+One of my focuses was to make the code readable and maintainable. Some of the things I did:
 - **Modular Design**: Clear separation of concerns
 - **Type Safety**: Full TypeScript implementation
 - **Validation**: Comprehensive input validation with class-validator
@@ -238,7 +239,7 @@ case 'ferry':
 
 ## Production Considerations
 
-For production deployment, consider:
+For production deployment, I would consider:
 - Database integration (PostgreSQL, MongoDB)
 - Authentication and authorization
 - Rate limiting
