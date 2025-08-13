@@ -1,19 +1,19 @@
 import {
-    Body,
-    Controller,
-    Get,
-    HttpException,
-    HttpStatus,
-    Param,
-    Post,
+  Body,
+  Controller,
+  Get,
+  HttpException,
+  HttpStatus,
+  Param,
+  Post,
 } from '@nestjs/common';
 import {
-    ApiBadRequestResponse,
-    ApiNotFoundResponse,
-    ApiOperation,
-    ApiParam,
-    ApiResponse,
-    ApiTags,
+  ApiBadRequestResponse,
+  ApiNotFoundResponse,
+  ApiOperation,
+  ApiParam,
+  ApiResponse,
+  ApiTags,
 } from '@nestjs/swagger';
 import { ItineraryResponseDto } from './dto/itinerary-response.dto';
 import { SortTicketsDto } from './dto/sort-tickets.dto';
