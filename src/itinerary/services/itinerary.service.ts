@@ -1,0 +1,53 @@
+import { Injectable } from '@nestjs/common';
+import { ItineraryResponseDto } from '../dto/itinerary-response.dto';
+import { IItinerary, ITicket } from '../interfaces/ticket.interface';
+import { ItineraryStorageService } from './itinerary-storage.service';
+import { TicketSorterService } from './ticket-sorter.service';
+
+@Injectable()
+export class ItineraryService {
+  constructor(
+    private readonly ticketSorter: TicketSorterService,
+    private readonly storage: ItineraryStorageService,
+  ) {}
+
+  /**
+   * Sorts tickets and creates a new itinerary
+   */
+  async sortAndStoreItinerary(
+    tickets: ITicket[],
+  ): Promise<ItineraryResponseDto> {
+    const sortedTickets = this.ticketSorter.sortTickets(tickets);
+    const readableItinerary =
+      this.ticketSorter.generateReadableItinerary(sortedTickets);
+
+    const itineraryData = {
+      sortedTickets,
+      readableItinerary,
+      createdAt: new Date(),
+    };
+
+    const id = this.storage.store(itineraryData);
+
+    return {
+      id,
+      sortedTickets,
+      readableItinerary,
+      createdAt: itineraryData.createdAt,
+    };
+  }
+
+  /**
+   * Retrieves a stored itinerary by ID
+   */
+  async getItinerary(id: string): Promise<IItinerary | null> {
+    return this.storage.getById(id);
+  }
+
+  /**
+   * Gets all stored itineraries
+   */
+  async getAllItineraries(): Promise<IItinerary[]> {
+    return this.storage.getAll();
+  }
+}
