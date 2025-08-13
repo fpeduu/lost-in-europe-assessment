@@ -17,19 +17,16 @@ export class TicketSorterService {
       return tickets;
     }
 
-    // Create a map of destinations to tickets for quick lookup
     const destinationMap = new Map<string, ITicket>();
     const startingPoints = new Set<string>();
     const destinations = new Set<string>();
 
-    // Build the graph
     tickets.forEach((ticket) => {
       destinationMap.set(ticket.from, ticket);
       startingPoints.add(ticket.from);
       destinations.add(ticket.to);
     });
 
-    // Find the starting point (location that is a 'from' but not a 'to')
     const actualStartingPoints = Array.from(startingPoints).filter(
       (start) => !destinations.has(start),
     );
@@ -46,7 +43,6 @@ export class TicketSorterService {
       );
     }
 
-    // Sort the tickets by following the chain
     const sortedTickets: ITicket[] = [];
     let currentLocation = actualStartingPoints[0];
     const usedTickets = new Set<ITicket>();
@@ -83,7 +79,6 @@ export class TicketSorterService {
       const step = index + 1;
       let instruction = `${step}. `;
 
-      // Format based on transportation type
       switch (ticket.type) {
         case TransitType.TRAIN:
           instruction += `Board train ${ticket.identifier || ''}, ${ticket.details || ''} from ${ticket.from} to ${ticket.to}`;
