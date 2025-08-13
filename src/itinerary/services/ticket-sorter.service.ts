@@ -1,4 +1,5 @@
 import { BadRequestException, Injectable } from '@nestjs/common';
+import { TransitType } from '../dto/ticket.dto';
 import { ITicket } from '../interfaces/ticket.interface';
 
 @Injectable()
@@ -84,38 +85,38 @@ export class TicketSorterService {
 
       // Format based on transportation type
       switch (ticket.type) {
-        case 'train':
+        case TransitType.TRAIN:
           instruction += `Board train ${ticket.identifier || ''}, ${ticket.details || ''} from ${ticket.from} to ${ticket.to}`;
           break;
-        case 'airplane':
+        case TransitType.AIRPLANE:
           instruction += `From ${ticket.from}, board the flight ${ticket.identifier || ''} to ${ticket.to}`;
           if (ticket.details) {
             instruction += ` ${ticket.details}`;
           }
           break;
-        case 'bus':
+        case TransitType.BUS:
           instruction += `Board the ${ticket.identifier ? ticket.identifier + ' ' : ''}bus from ${ticket.from} to ${ticket.to}`;
           if (ticket.details) {
             instruction += `. ${ticket.details}`;
           }
           break;
-        case 'tram':
+        case TransitType.TRAM:
           instruction += `Board the Tram ${ticket.identifier || ''} from ${ticket.from} to ${ticket.to}`;
           break;
-        case 'boat':
+        case TransitType.BOAT:
           instruction += `Board the boat ${ticket.identifier || ''} from ${ticket.from} to ${ticket.to}`;
           if (ticket.details) {
             instruction += `. ${ticket.details}`;
           }
           break;
-        case 'taxi':
+        case TransitType.TAXI:
           instruction += `Take taxi from ${ticket.from} to ${ticket.to}`;
           if (ticket.details) {
             instruction += `. ${ticket.details}`;
           }
           break;
         default:
-          instruction += `Travel by ${ticket.type} from ${ticket.from} to ${ticket.to}`;
+          instruction += `Travel from ${ticket.from} to ${ticket.to}`;
       }
 
       // Clean up extra spaces and add period if not present

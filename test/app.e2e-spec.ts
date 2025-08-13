@@ -1,6 +1,7 @@
 import { INestApplication, ValidationPipe } from '@nestjs/common';
 import { Test, TestingModule } from '@nestjs/testing';
 import * as request from 'supertest';
+import { ItineraryResponseDto } from '../src/itinerary/dto/itinerary-response.dto';
 import { TransitType } from '../src/itinerary/dto/ticket.dto';
 import { AppModule } from './../src/app.module';
 
@@ -57,7 +58,7 @@ describe('Itinerary API (e2e)', () => {
         .post('/itinerary/sort')
         .send({ tickets })
         .expect(201)
-        .expect((res) => {
+        .expect((res: { body: ItineraryResponseDto }) => {
           expect(res.body).toHaveProperty('id');
           expect(res.body).toHaveProperty('sortedTickets');
           expect(res.body).toHaveProperty('readableItinerary');
@@ -127,13 +128,13 @@ describe('Itinerary API (e2e)', () => {
         .send({ tickets })
         .expect(201);
 
-      const itineraryId = createResponse.body.id;
+      const itineraryId = (createResponse.body as ItineraryResponseDto).id;
 
       // Then retrieve it
       return request(app.getHttpServer())
         .get(`/itinerary/${itineraryId}`)
         .expect(200)
-        .expect((res) => {
+        .expect((res: { body: ItineraryResponseDto }) => {
           expect(res.body.id).toBe(itineraryId);
           expect(res.body).toHaveProperty('sortedTickets');
           expect(res.body).toHaveProperty('readableItinerary');
@@ -166,7 +167,7 @@ describe('Itinerary API (e2e)', () => {
       return request(app.getHttpServer())
         .get('/itinerary')
         .expect(200)
-        .expect((res) => {
+        .expect((res: { body: ItineraryResponseDto[] }) => {
           expect(Array.isArray(res.body)).toBe(true);
           expect(res.body.length).toBeGreaterThanOrEqual(1);
         });

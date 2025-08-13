@@ -1,12 +1,11 @@
 import { TransitType } from '@/itinerary/dto/ticket.dto';
 import { ItineraryController } from '@/itinerary/itinerary.controller';
-import { ItineraryService } from '@/itinerary/itinerary.service';
+import { ItineraryService } from '@/itinerary/services/itinerary.service';
 import { HttpException } from '@nestjs/common';
 import { Test, TestingModule } from '@nestjs/testing';
 
 describe('ItineraryController', () => {
   let controller: ItineraryController;
-  let service: ItineraryService;
 
   const mockItineraryService = {
     sortAndStoreItinerary: jest.fn(),
@@ -26,7 +25,6 @@ describe('ItineraryController', () => {
     }).compile();
 
     controller = module.get<ItineraryController>(ItineraryController);
-    service = module.get<ItineraryService>(ItineraryService);
   });
 
   it('should be defined', () => {
@@ -34,7 +32,7 @@ describe('ItineraryController', () => {
   });
 
   describe('sortTickets', () => {
-    it('should sort tickets successfully', async () => {
+    it('should sort tickets successfully', () => {
       const tickets = [
         {
           type: TransitType.TRAIN,
@@ -56,15 +54,17 @@ describe('ItineraryController', () => {
         createdAt: new Date(),
       };
 
-      mockItineraryService.sortAndStoreItinerary.mockResolvedValue(mockResult);
+      mockItineraryService.sortAndStoreItinerary.mockReturnValue(mockResult);
 
-      const result = await controller.sortTickets({ tickets });
+      const result = controller.sortTickets({ tickets });
 
       expect(result).toEqual(mockResult);
-      expect(service.sortAndStoreItinerary).toHaveBeenCalledWith(tickets);
+      expect(mockItineraryService.sortAndStoreItinerary).toHaveBeenCalledWith(
+        tickets,
+      );
     });
 
-    it('should handle sorting errors', async () => {
+    it('should handle sorting errors', () => {
       const tickets = [
         {
           type: TransitType.TRAIN,
@@ -73,18 +73,16 @@ describe('ItineraryController', () => {
         },
       ];
 
-      mockItineraryService.sortAndStoreItinerary.mockRejectedValue(
-        new Error('Circular route detected'),
-      );
+      mockItineraryService.sortAndStoreItinerary.mockImplementation(() => {
+        throw new Error('Circular route detected');
+      });
 
-      await expect(controller.sortTickets({ tickets })).rejects.toThrow(
-        HttpException,
-      );
+      expect(() => controller.sortTickets({ tickets })).toThrow(HttpException);
     });
   });
 
   describe('getItinerary', () => {
-    it('should return itinerary when found', async () => {
+    it('should return itinerary when found', () => {
       const mockItinerary = {
         id: 'test-id',
         sortedTickets: [],
@@ -92,17 +90,17 @@ describe('ItineraryController', () => {
         createdAt: new Date(),
       };
 
-      mockItineraryService.getItinerary.mockResolvedValue(mockItinerary);
+      mockItineraryService.getItinerary.mockReturnValue(mockItinerary);
 
-      const result = await controller.getItinerary('test-id');
+      const result = controller.getItinerary('test-id');
 
       expect(result).toEqual(mockItinerary);
     });
 
-    it('should throw 404 when itinerary not found', async () => {
-      mockItineraryService.getItinerary.mockResolvedValue(null);
+    it('should throw 404 when itinerary not found', () => {
+      mockItineraryService.getItinerary.mockReturnValue(null);
 
-      await expect(controller.getItinerary('non-existent')).rejects.toThrow(
+      expect(() => controller.getItinerary('non-existent')).toThrow(
         HttpException,
       );
     });

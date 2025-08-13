@@ -30,4 +30,4 @@ async function bootstrap() {
   console.log("Kevin's Travel API is running on http://localhost:3000");
   console.log('Swagger documentation available at http://localhost:3000/api');
 }
-bootstrap();
+void bootstrap();

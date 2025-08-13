@@ -1,19 +1,19 @@
 import {
-  Body,
-  Controller,
-  Get,
-  HttpException,
-  HttpStatus,
-  Param,
-  Post,
+    Body,
+    Controller,
+    Get,
+    HttpException,
+    HttpStatus,
+    Param,
+    Post,
 } from '@nestjs/common';
 import {
-  ApiBadRequestResponse,
-  ApiNotFoundResponse,
-  ApiOperation,
-  ApiParam,
-  ApiResponse,
-  ApiTags,
+    ApiBadRequestResponse,
+    ApiNotFoundResponse,
+    ApiOperation,
+    ApiParam,
+    ApiResponse,
+    ApiTags,
 } from '@nestjs/swagger';
 import { ItineraryResponseDto } from './dto/itinerary-response.dto';
 import { SortTicketsDto } from './dto/sort-tickets.dto';
@@ -40,18 +40,15 @@ export class ItineraryController {
     description:
       'Invalid ticket data or unsortable tickets (circular/disconnected routes)',
   })
-  async sortTickets(
-    @Body() sortTicketsDto: SortTicketsDto,
-  ): Promise<ItineraryResponseDto> {
+  sortTickets(@Body() sortTicketsDto: SortTicketsDto): ItineraryResponseDto {
     try {
-      return await this.itineraryService.sortAndStoreItinerary(
+      return this.itineraryService.sortAndStoreItinerary(
         sortTicketsDto.tickets,
       );
     } catch (error) {
-      throw new HttpException(
-        error.message || 'Failed to sort tickets',
-        HttpStatus.BAD_REQUEST,
-      );
+      const errorMessage =
+        error instanceof Error ? error.message : 'Failed to sort tickets';
+      throw new HttpException(errorMessage, HttpStatus.BAD_REQUEST);
     }
   }
 
@@ -74,8 +71,8 @@ export class ItineraryController {
   @ApiNotFoundResponse({
     description: 'Itinerary not found',
   })
-  async getItinerary(@Param('id') id: string): Promise<IItinerary> {
-    const itinerary = await this.itineraryService.getItinerary(id);
+  getItinerary(@Param('id') id: string): IItinerary {
+    const itinerary = this.itineraryService.getItinerary(id);
 
     if (!itinerary) {
       throw new HttpException('Itinerary not found', HttpStatus.NOT_FOUND);
@@ -94,7 +91,7 @@ export class ItineraryController {
     description: 'List of all stored itineraries',
     type: [ItineraryResponseDto],
   })
-  async getAllItineraries(): Promise<IItinerary[]> {
-    return await this.itineraryService.getAllItineraries();
+  getAllItineraries(): IItinerary[] {
+    return this.itineraryService.getAllItineraries();
   }
 }

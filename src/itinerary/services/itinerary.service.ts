@@ -14,9 +14,7 @@ export class ItineraryService {
   /**
    * Sorts tickets and creates a new itinerary
    */
-  async sortAndStoreItinerary(
-    tickets: ITicket[],
-  ): Promise<ItineraryResponseDto> {
+  sortAndStoreItinerary(tickets: ITicket[]): ItineraryResponseDto {
     const sortedTickets = this.ticketSorter.sortTickets(tickets);
     const readableItinerary =
       this.ticketSorter.generateReadableItinerary(sortedTickets);
@@ -40,14 +38,14 @@ export class ItineraryService {
   /**
    * Retrieves a stored itinerary by ID
    */
-  async getItinerary(id: string): Promise<IItinerary | null> {
+  getItinerary(id: string): IItinerary | null {
     return this.storage.getById(id);
   }
 
   /**
    * Gets all stored itineraries
    */
-  async getAllItineraries(): Promise<IItinerary[]> {
+  getAllItineraries(): IItinerary[] {
     return this.storage.getAll();
   }
 }
